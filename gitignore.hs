@@ -72,12 +72,12 @@ main = do
       let ignores =
             fmap (\x -> x { Main.path = fmap toLower (init $ Main.path x) }) $
             filter ((/= "") . Main.path) $
-            fmap (\x -> x { Main.path = (dropWhileEnd (/= '.')) (Main.path x) }) x
+            fmap (\x -> x { Main.path = dropWhileEnd (/= '.') (Main.path x) }) x
       case s of
         "list" ->
           mapM_ putStrLn $ sort $ fmap path ignores
         _ -> do
-          let selected = find (\y -> (fmap toLower (Main.path y)) == s) ignores
+          let selected = find (\y -> fmap toLower (Main.path y) == s) ignores
           case selected of
             Nothing -> error "No such gitignore was found. Use 'list' for all possible gitignores."
             Just f -> do
