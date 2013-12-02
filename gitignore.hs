@@ -40,6 +40,8 @@ instance FromJSON GitIgnoreFile where
   parseJSON (Object v) = GitIgnoreFile <$>
                          v .: "content"
 
+-- | Get the current list of gitignore templates from the github/gitignore
+--   repository, via the GitHub API.
 getIgnoresIndex :: IO [GitIgnore]
 getIgnoresIndex = withSocketsDo $ do
   x <- parseUrl "https://api.github.com/repos/github/gitignore/git/trees/master"
@@ -50,6 +52,8 @@ getIgnoresIndex = withSocketsDo $ do
     Nothing -> error "JSON decode failed"
     Just g -> return $ gitIgnores g
 
+-- | Given a URL obtained from the gitignores index, get the contents of the
+--   file, after decoding (base64) its contents.
 getIgnoreFile :: String -> IO B.ByteString
 getIgnoreFile url = withSocketsDo $ do
   x <- parseUrl url
