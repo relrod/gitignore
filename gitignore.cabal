@@ -15,6 +15,10 @@ category:            Development
 build-type:          Simple
 cabal-version:       >=1.8
 
+source-repository head
+  type:         git
+  location:     git://github.com:CodeBlock/gitignore.git
+
 executable gitignore
   main-is:              gitignore.hs
   build-depends:        aeson ==0.6.*, base >=4.6 && <4.7, base64-bytestring ==1.0.*, bytestring ==0.10.*, http-conduit ==1.9.5.*, network ==2.4.*, safe ==0.3.*, text ==0.11.*
