@@ -24,7 +24,7 @@ data GitIgnore = GitIgnore {
 } deriving Show
 
 data GitIgnoreFile = GitIgnoreFile {
-    content :: B.ByteString
+    content :: String
 }
 
 instance FromJSON GitIgnoreIndex where
@@ -62,7 +62,7 @@ getIgnoreFile url = withSocketsDo $ do
   let decodedBody = decode (responseBody l) :: Maybe GitIgnoreFile
   case decodedBody of
     Nothing -> error "JSON decode failed"
-    Just g -> return $ Base64.decodeLenient $ content g
+    Just g -> return . Base64.decodeLenient . C8.pack . content $ g
 
 main :: IO ()
 main = do

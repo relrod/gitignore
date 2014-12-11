@@ -18,11 +18,11 @@ source-repository head
 
 executable gitignore
   main-is:              gitignore.hs
-  build-depends:        aeson >= 0.6 && < 0.8,
+  build-depends:        aeson >= 0.8 && < 0.9,
                         base >= 4 && < 5,
                         base64-bytestring >= 1 && < 2,
                         bytestring >= 0.10 && < 1,
-                        http-conduit >= 1.9 && < 2,
+                        http-conduit >= 2 && < 3,
                         network >= 2.4 && < 3,
                         safe >= 0.3 && < 0.4,
                         text >= 0.11 && < 1.3
