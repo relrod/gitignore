@@ -3,6 +3,7 @@
 module Main where
 
 import Control.Applicative
+import Control.Monad (forM_)
 import Data.Aeson
 import Data.Char (toLower)
 import Data.List (dropWhileEnd, find, sort)
@@ -13,7 +14,6 @@ import Network (withSocketsDo)
 import Network.HTTP.Conduit hiding (path)
 import Safe (headMay)
 import System.Environment (getArgs)
-import Control.Monad(forM_)
 
 data GitIgnoreIndex = GitIgnoreIndex {
     gitIgnores :: [GitIgnore]
@@ -79,12 +79,14 @@ main = do
             filter ((/= "") . Main.path) $
             fmap (\x -> x { Main.path = dropWhileEnd (/= '.') (Main.path x) }) x
       case s of
-        "list" ->
-          mapM_ putStrLn $ sort $ fmap path ignores
-        _ -> forM_ a (\s->do
-          let selected = find (\y -> fmap toLower (Main.path y) == s) ignores
-          case selected of
-            Nothing -> error "No such gitignore was found. Use 'list' for all possible gitignores."
-            Just f -> do
-                decoded <- getIgnoreFile $ url f
-                putStr $ C8.unpack decoded)
+        "list" -> mapM_ putStrLn $ sort $ fmap path ignores
+        _ -> forM_ a (printIgnore ignores)
+
+printIgnore :: Foldable t => t GitIgnore -> [Char] -> IO ()
+printIgnore ignores s = do
+  let selected = find (\y -> fmap toLower (Main.path y) == s) ignores
+  case selected of
+    Nothing -> error "No such gitignore was found. Use 'list' for all possible gitignores."
+    Just f -> do
+        decoded <- getIgnoreFile $ url f
+        putStr $ C8.unpack decoded
