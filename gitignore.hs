@@ -13,6 +13,7 @@ import Network (withSocketsDo)
 import Network.HTTP.Conduit hiding (path)
 import Safe (headMay)
 import System.Environment (getArgs)
+import Control.Monad(forM_)
 
 data GitIgnoreIndex = GitIgnoreIndex {
     gitIgnores :: [GitIgnore]
@@ -80,10 +81,10 @@ main = do
       case s of
         "list" ->
           mapM_ putStrLn $ sort $ fmap path ignores
-        _ -> do
+        _ -> forM_ a (\s->do
           let selected = find (\y -> fmap toLower (Main.path y) == s) ignores
           case selected of
             Nothing -> error "No such gitignore was found. Use 'list' for all possible gitignores."
             Just f -> do
-              decoded <- getIgnoreFile $ url f
-              putStr $ C8.unpack decoded
+                decoded <- getIgnoreFile $ url f
+                putStr $ C8.unpack decoded)
